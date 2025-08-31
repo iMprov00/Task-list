@@ -1,9 +1,12 @@
 require 'json'
+require 'date'
 
 class Task # класс задач
 
 	def save_task(options={}) #метод сохраняющий новую задачу
-		name_task = options[:name] || 0
+		name_task = options[:name] || 0 # проверка на случай если переданный параметр пустой
+
+
 	end #end def
 end #end class
 
@@ -36,11 +39,11 @@ loop do
 	puts
 
 	case input
-		when "1"
-			message.task_message
-			input_task_create = gets
-			params_task_create = {name: input_task_create}			
-			task.save_task(params_task_create)
+		when "1" #создаем задачу
+			message.task_message # выводим сообщение 
+			input_task_create = gets # сохраняем ввод пользователя
+			params_task_create = {name: input_task_create} # сохраняем ввод пользователя в переменную параметров		
+			task.save_task(params_task_create) #передаем этим параметры в метод для сохранения задач
 		when ""
 			exit # выходим из программы если нажали Enter
 
