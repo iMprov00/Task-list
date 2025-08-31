@@ -1,6 +1,6 @@
 require 'json'
 
-def message
+def menu_message # метод для отображения меню программы
 	puts "Меню программы"
 	puts "--------------"
 	puts "1 - создать задачу"
@@ -11,7 +11,7 @@ def message
 end
 
 loop do 
-	message
+	menu_message #выводим сообщение
 
 	input = gets.chomp #принимает ввод с клавиатуры
 
