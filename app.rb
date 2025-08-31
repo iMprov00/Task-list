@@ -7,19 +7,25 @@ class Task
 	end #end def
 end #end class
 
-def menu_message # метод для отображения меню программы
-	puts "Меню программы"
-	puts "--------------"
-	puts "1 - создать задачу"
-	puts "1 - создать задачу"
-	puts "Enter - выйти из программы"
-	puts "--------------"
-	puts
-	print "Ввод: "
-end #end def
+class Message # класс для управления сообщениями
+
+	def menu_message # метод для отображения меню программы
+		puts "Меню программы"
+		puts "--------------"
+		puts "1 - создать задачу"
+		puts "1 - создать задачу"
+		puts "Enter - выйти из программы"
+		puts "--------------"
+		puts
+		print "Ввод: "
+	end #end def
+
+end #end class
+
+message = Message.new #создаем экземпляр класса сообщений 
 
 loop do 
-	menu_message #выводим сообщение
+	message.menu_message #выводим сообщение
 
 	input = gets.chomp #принимает ввод с клавиатуры
 
