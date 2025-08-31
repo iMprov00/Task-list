@@ -1,9 +1,9 @@
 require 'json'
 
-class Task
+class Task # класс задач
 
-	def input_task
-
+	def save_task(options={}) #метод сохраняющий новую задачу
+		name_task = options[:name] || 0
 	end #end def
 end #end class
 
@@ -13,16 +13,20 @@ class Message # класс для управления сообщениями
 		puts "Меню программы"
 		puts "--------------"
 		puts "1 - создать задачу"
-		puts "1 - создать задачу"
 		puts "Enter - выйти из программы"
 		puts "--------------"
 		puts
 		print "Ввод: "
 	end #end def
 
+	def task_message
+		print "Введите название задачи: "
+	end
+
 end #end class
 
 message = Message.new #создаем экземпляр класса сообщений 
+task = Task.new #создаем экземпляр класса задачи
 
 loop do 
 	message.menu_message #выводим сообщение
@@ -33,7 +37,10 @@ loop do
 
 	case input
 		when "1"
-
+			message.task_message
+			input_task_create = gets
+			params_task_create = {name: input_task_create}			
+			task.save_task(params_task_create)
 		when ""
 			exit # выходим из программы если нажали Enter
 
