@@ -2,7 +2,10 @@ require 'json'
 
 class Task
 
-end
+	def input_task
+
+	end #end def
+end #end class
 
 def menu_message # метод для отображения меню программы
 	puts "Меню программы"
@@ -13,7 +16,7 @@ def menu_message # метод для отображения меню прогр�
 	puts "--------------"
 	puts
 	print "Ввод: "
-end
+end #end def
 
 loop do 
 	menu_message #выводим сообщение
