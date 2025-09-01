@@ -63,6 +63,14 @@ class TaskRepository # класс задач
 		save_task
 	end
 
+	def task_delete(index)
+		read_json 
+
+		@parsed_data[:task].delete_at(index)
+
+		save_task
+	end
+
 	def is_available?(input)
 		ret = false
 		@parsed_data[:task].each_with_index do |value, index|
@@ -72,7 +80,6 @@ class TaskRepository # класс задач
 		end
 		ret
 	end
-
 end #end class
 
 class Message # класс для управления сообщениями
@@ -93,6 +100,7 @@ class Message # класс для управления сообщениями
 		puts "--------------"
 		puts "1 - название"
 		puts "2 - выполнение"
+		puts "3 - удалить"
 		puts "Enter - вернуться назад"
 		puts "--------------"
 		puts
@@ -177,7 +185,23 @@ loop do
 							when 2
 								task.edit_status((input_task.to_i - 1))
 
+							when 3
+								loop do 
+									print "Вы уверенны что хотите удалить задачу №#{input_task.to_i}? 1 - да, 2 - нет: "
+									input_delete = gets.to_i
 
+									if input_delete == 1
+										task.task_delete((input_task.to_i - 1))
+										break
+									elsif input_delete == 2
+										break
+									else
+										message.clear
+										puts "Некорректный ввод!"
+										puts
+									end #end if
+								end #end loop
+								break #выходим из цикла редактирования задачи
 							when 0
 								break
 							else
