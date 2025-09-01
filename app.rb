@@ -100,6 +100,7 @@ class Message # класс для управления сообщениями
 	end
 
 	def no_task
+		puts
 		puts "Такой задачи нет в списке"
 	end #end def
 
@@ -126,17 +127,17 @@ loop do
 		when "2"
 			message.view_all_tasks(task.parsed_data)
 			
-			print "Ввод: "
+			print "Введите номер задачи или Enter чтобы вернуться назад: "
 			input_task = gets.chomp
 
 			if input_task.empty? 
-
+				message.menu_message
 			else
 				if task.is_available?(input_task)
 					loop do	
 						data = task.parsed_data
 						message.view_task(data[:task][input_task.to_i])
-						print ""
+						
 					end
 				else
 					message.no_task
