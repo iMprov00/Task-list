@@ -14,7 +14,6 @@ class TaskRepository # класс задач
 
 	  json_data = File.read(file_path)  
 	  @parsed_data = JSON.parse(json_data, symbolize_names: true)
-	  
 	end
 
 	def save_task(options={}) #метод сохраняющий новую задачу
@@ -30,7 +29,7 @@ class Message # класс для управления сообщениями
 		puts "Меню программы"
 		puts "--------------"
 		puts "1 - создать задачу"
-		puts "2 - читать (тест)"
+		puts "2 - посмотреть задачи"
 		puts "Enter - выйти из программы"
 		puts "--------------"
 		puts
