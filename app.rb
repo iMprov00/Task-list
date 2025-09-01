@@ -3,10 +3,17 @@ require 'date'
 
 class TaskRepository # класс задач
 
+	def read_json
+	  file_path = File.join(__dir__, 'tasks.json')
+	  return unless File.exist?(file_path)
+
+	  json_data = File.read(file_path)  # Используем file_path вместо 'tasks.json'
+	  parsed_data = JSON.parse(json_data, symbolize_names: true)
+	  end
+	end
+
 	def save_task(options={}) #метод сохраняющий новую задачу
 		name_task = options[:name] || 0 # проверка на случай если переданный параметр пустой
-
-
 
 	end #end def
 end #end class
@@ -17,6 +24,7 @@ class Message # класс для управления сообщениями
 		puts "Меню программы"
 		puts "--------------"
 		puts "1 - создать задачу"
+		puts "2 - читать (тест)"
 		puts "Enter - выйти из программы"
 		puts "--------------"
 		puts
@@ -30,7 +38,7 @@ class Message # класс для управления сообщениями
 end #end class
 
 message = Message.new #создаем экземпляр класса сообщений 
-task = Task.new #создаем экземпляр класса задачи
+task = TaskRepository.new #создаем экземпляр класса задачи
 
 loop do 
 	message.menu_message #выводим сообщение
@@ -45,6 +53,8 @@ loop do
 			input_task_create = gets # сохраняем ввод пользователя
 			params_task_create = {name: input_task_create} # сохраняем ввод пользователя в переменную параметров		
 			task.save_task(params_task_create) #передаем этим параметры в метод для сохранения задач
+		when "2"
+			task.read_json
 		when ""
 			exit # выходим из программы если нажали Enter
 
