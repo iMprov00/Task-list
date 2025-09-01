@@ -43,6 +43,16 @@ class TaskRepository # класс задач
 	  puts "Задача добавлена: #{name_task}"
 	end #end def
 
+	def edit_name(name, index)
+		read_json
+
+		@parsed_data[:task][index][:name] = name
+	end
+
+	def edit_statud(index)
+
+	end
+
 	def is_available?(input)
 		ret = false
 		@parsed_data[:task].each_with_index do |value, index|
@@ -70,11 +80,12 @@ class Message # класс для управления сообщениями
 	end #end def
 
 	def editing_task_message
-		puts 
 		puts "Редактироване задачи"
 		puts "--------------"
 		puts "1 - название"
 		puts "2 - выполнение"
+		puts "Enter - вернуться назад"
+		puts "--------------"
 		puts
 	end
 
@@ -136,13 +147,34 @@ loop do
 				if task.is_available?(input_task)
 					loop do	
 						data = task.parsed_data
-						message.view_task(data[:task][input_task.to_i])
+						message.view_task(data[:task][(input_task.to_i - 1)])
 						
-					end
+						message.editing_task_message
+						print "Ввод: "
+						input_editing = gets.to_i
+
+						case input_editing
+
+							when 1
+								print "Введите новое название: "
+								input_name = gets
+								task.edit_name(input_name, (input_task.to_i - 1))
+
+							when 2
+								task.edti_status((input_task.to_i - 1))
+								puts "Статус задачи изменился"
+
+							when 0
+								break
+
+							else
+								puts "Некорректный ввод! Попробуйте ещё раз"
+						end # end case
+					end #end loop
 				else
 					message.no_task
-				end
-			end
+				end # end if 2
+			end #end if 1
 
 		when ""
 			exit # выходим из программы если нажали Enter
