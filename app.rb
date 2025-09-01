@@ -21,7 +21,14 @@ class TaskRepository # класс задач
 	         end #парсим данные в переменную
 	end
 
-	def save_task(options={})
+	def save_task
+		# Записываем обновленные данные обратно в файл
+	  File.open(@file_path, 'w') do |file|
+	    file.write(JSON.pretty_generate(@parsed_data))
+	  end
+	end
+
+	def save_task_new(options={})
 	  name_task = options[:name]&.chomp # Убираем символ новой строки
 	  return if name_task.nil? || name_task.empty? # Проверяем, что название не пустое
 
@@ -34,12 +41,9 @@ class TaskRepository # класс задач
 	  
 	  # Добавляем задачу в массив
 	  @parsed_data[:task] << new_task
-
-	  # Записываем обновленные данные обратно в файл
-	  File.open(@file_path, 'w') do |file|
-	    file.write(JSON.pretty_generate(@parsed_data))
-	  end
 	  
+	  save_task
+
 	  puts "Задача добавлена: #{name_task}"
 	end #end def
 
@@ -47,10 +51,16 @@ class TaskRepository # класс задач
 		read_json
 
 		@parsed_data[:task][index][:name] = name
+
+		save_task
 	end
 
-	def edit_statud(index)
+	def edit_status(index)
+		read_json
 
+		@parsed_data[:task][index][:completed]? @parsed_data[:task][index][:completed] = false : @parsed_data[:task][index][:completed] = true 
+
+		save_task
 	end
 
 	def is_available?(input)
@@ -68,7 +78,6 @@ end #end class
 class Message # класс для управления сообщениями
 
 	def menu_message # метод для отображения меню программы
-		puts
 		puts "Меню программы"
 		puts "--------------"
 		puts "1 - создать задачу"
@@ -103,24 +112,23 @@ class Message # класс для управления сообщениями
 	end #end def
 
 	def view_task(data)
-			puts
 			puts "Задача: #{data[:name]}"
 			puts "Выполнена: #{data[:completed]? "X" : " "}"
 			puts "Дата создания: #{data[:date]}"
 			puts 
 	end
 
-	def no_task
-		puts
-		puts "Такой задачи нет в списке"
-	end #end def
-
+	def clear
+		puts "\e[H\e[2J"
+	end 
 end #end class
 
 message = Message.new #создаем экземпляр класса сообщений 
 task = TaskRepository.new #создаем экземпляр класса задачи
 
-loop do 
+message.clear
+
+loop do
 	message.menu_message #выводим сообщение
 
 	input = gets.chomp #принимает ввод с клавиатуры
@@ -129,23 +137,29 @@ loop do
 
 	case input
 		when "1" #создаем задачу
+			message.clear
+
 			message.task_message # выводим сообщение 
 			input_task_create = gets # сохраняем ввод пользователя
 			params_task_create = {name: input_task_create} # сохраняем ввод пользователя в переменную параметров		
-			task.save_task(params_task_create) #передаем этим параметры в метод для сохранения задач
+			task.save_task_new(params_task_create) #передаем этим параметры в метод для сохранения задач
 			puts
 
 		when "2"
+			message.clear
+
 			message.view_all_tasks(task.parsed_data)
 			
 			print "Введите номер задачи или Enter чтобы вернуться назад: "
 			input_task = gets.chomp
 
 			if input_task.empty? 
-				message.menu_message
+				message.clear
 			else
+				message.clear
 				if task.is_available?(input_task)
 					loop do	
+						message.clear
 						data = task.parsed_data
 						message.view_task(data[:task][(input_task.to_i - 1)])
 						
@@ -161,26 +175,30 @@ loop do
 								task.edit_name(input_name, (input_task.to_i - 1))
 
 							when 2
-								task.edti_status((input_task.to_i - 1))
-								puts "Статус задачи изменился"
+								task.edit_status((input_task.to_i - 1))
+
 
 							when 0
 								break
-
 							else
 								puts "Некорректный ввод! Попробуйте ещё раз"
 						end # end case
 					end #end loop
 				else
-					message.no_task
+					message.clear
+					puts "Такой задачи нет в списке"
+					puts
 				end # end if 2
 			end #end if 1
-
+			message.clear
 		when ""
 			exit # выходим из программы если нажали Enter
 
 		else
+			message.clear
+
 			puts "Некорректный ввод! Попробуйте ещё раз" # обработчик в случае ввода любого значения не относящегося к управлению программой
+			puts
 	end
 	
 end
