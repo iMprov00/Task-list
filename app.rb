@@ -16,11 +16,48 @@ class TaskRepository # класс задач
 	  @parsed_data = JSON.parse(json_data, symbolize_names: true)
 	end
 
-	def save_task(options={}) #метод сохраняющий новую задачу
-		name_task = options[:name] || 0 # проверка на случай если переданный параметр пустой
+	def save_task(options={})
+	  name_task = options[:name]&.chomp # Убираем символ новой строки
+	  return if name_task.nil? || name_task.empty? # Проверяем, что название не пустое
 
+	  # Определяем путь к файлу
+	  file_path = File.join(__dir__, 'tasks.json')
+	  
+	  # Читаем текущие данные или создаем пустую структуру
+	  data = if File.exist?(file_path)
+	           json_data = File.read(file_path)
+	           JSON.parse(json_data, symbolize_names: true)
+	         else
+	           { task: [] } # Если файла нет, создаем пустой массив задач
+	         end
 
+	  # Создаем новую задачу
+	  new_task = {
+	    completed: false,
+	    name: name_task,
+	    date: DateTime.now.strftime('%Y-%m-%d %H:%M:%S')
+	  }
+	  
+	  # Добавляем задачу в массив
+	  data[:task] << new_task
+
+	  # Записываем обновленные данные обратно в файл
+	  File.open(file_path, 'w') do |file|
+	    file.write(JSON.pretty_generate(data))
+	  end
+	  
+	  puts "Задача добавлена: #{name_task}"
 	end #end def
+
+	def view_task
+		@parsed_data[:task].each do |arr|
+			puts "Задача: #{arr[:name]}"
+			puts "Выполнена: #{arr[:completed]? "X" : " "}"
+			puts "Дата создания: #{arr[:date]}"
+			puts "----------------------------"
+		end
+	end #end def
+
 end #end class
 
 class Message # класс для управления сообщениями
@@ -58,8 +95,11 @@ loop do
 			input_task_create = gets # сохраняем ввод пользователя
 			params_task_create = {name: input_task_create} # сохраняем ввод пользователя в переменную параметров		
 			task.save_task(params_task_create) #передаем этим параметры в метод для сохранения задач
+			puts
 		when "2"
-			task.read_json
+			task.view_task
+			puts "Enter - вернуться назад"
+			gets
 		when ""
 			exit # выходим из программы если нажали Enter
 
