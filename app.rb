@@ -43,6 +43,16 @@ class TaskRepository # класс задач
 	  puts "Задача добавлена: #{name_task}"
 	end #end def
 
+	def is_available?(input)
+		ret = false
+		@parsed_data[:task].each_with_index do |value, index|
+			if value == input || index == (input.to_i - 1)
+				ret = true
+			end
+		end
+		ret
+	end
+
 end #end class
 
 class Message # класс для управления сообщениями
@@ -64,13 +74,13 @@ class Message # класс для управления сообщениями
 	end
 
 	def view_all_tasks(data)
-				data[:task].each_with_index do |value, index|
+		data[:task].each_with_index do |value, index|
 			puts "Задача: №#{(index + 1)}, #{value[:name]}"
 			puts "Выполнена: #{value[:completed]? "X" : " "}"
 			puts "Дата создания: #{value[:date]}"
 			puts "----------------------------"
 		end
-	end
+	end #end def
 
 end #end class
 
@@ -94,8 +104,14 @@ loop do
 		when "2"
 			message.view_all_tasks(task.parsed_data)
 			
-			puts "Ввод: "
+			print "Ввод: "
 			input_task = gets.chomp
+
+			if input_task.empty? 
+
+			else
+				task.is_available?(input_task)
+			end
 
 		when ""
 			exit # выходим из программы если нажали Enter
