@@ -2,34 +2,28 @@ require 'json'
 require 'date'
 
 class TaskRepository # класс задач
-	attr_reader :parsed_data #инициализиурем переменную хранящую в себе спарсенный файл
+	attr_reader :parsed_data, :file_path #инициализиурем переменную хранящую в себе спарсенный файл
 
 	def initialize 
 		read_json
 	end
 
 	def read_json
-	  file_path = File.join(__dir__, 'tasks.json') #сохраняем в переменную путь к файлу
+	  @file_path = File.join(__dir__, 'tasks.json') #сохраняем в переменную путь к файлу
 	  return unless File.exist?(file_path) 
 
 	  json_data = File.read(file_path)  
-	  @parsed_data = JSON.parse(json_data, symbolize_names: true) #парсим данные в переменную
+	  @parsed_data = if File.exist?(file_path) 
+	           json_data = File.read(file_path)
+	           JSON.parse(json_data, symbolize_names: true)
+	         else
+	           { task: [] } # Если файла нет, создаем пустой массив задач
+	         end #парсим данные в переменную
 	end
 
 	def save_task(options={})
 	  name_task = options[:name]&.chomp # Убираем символ новой строки
 	  return if name_task.nil? || name_task.empty? # Проверяем, что название не пустое
-
-	  # Определяем путь к файлу
-	  file_path = File.join(__dir__, 'tasks.json') #определяем относительный путь
-	  
-	  # Читаем текущие данные или создаем пустую структуру
-	  data = if File.exist?(file_path) 
-	           json_data = File.read(file_path)
-	           JSON.parse(json_data, symbolize_names: true)
-	         else
-	           { task: [] } # Если файла нет, создаем пустой массив задач
-	         end
 
 	  # Создаем новую задачу
 	  new_task = {
@@ -39,23 +33,14 @@ class TaskRepository # класс задач
 	  }
 	  
 	  # Добавляем задачу в массив
-	  data[:task] << new_task
+	  @parsed_data[:task] << new_task
 
 	  # Записываем обновленные данные обратно в файл
-	  File.open(file_path, 'w') do |file|
-	    file.write(JSON.pretty_generate(data))
+	  File.open(@file_path, 'w') do |file|
+	    file.write(JSON.pretty_generate(@parsed_data))
 	  end
 	  
 	  puts "Задача добавлена: #{name_task}"
-	end #end def
-
-	def view_all_tasks  # метод для отображения всех задач
-		@parsed_data[:task].each_with_index do |value, index|
-			puts "Задача: №#{(index + 1)}, #{value[:name]}"
-			puts "Выполнена: #{value[:completed]? "X" : " "}"
-			puts "Дата создания: #{value[:date]}"
-			puts "----------------------------"
-		end
 	end #end def
 
 end #end class
@@ -63,6 +48,7 @@ end #end class
 class Message # класс для управления сообщениями
 
 	def menu_message # метод для отображения меню программы
+		puts
 		puts "Меню программы"
 		puts "--------------"
 		puts "1 - создать задачу"
@@ -75,6 +61,15 @@ class Message # класс для управления сообщениями
 
 	def task_message
 		print "Введите название задачи: "
+	end
+
+	def view_all_tasks(data)
+				data[:task].each_with_index do |value, index|
+			puts "Задача: №#{(index + 1)}, #{value[:name]}"
+			puts "Выполнена: #{value[:completed]? "X" : " "}"
+			puts "Дата создания: #{value[:date]}"
+			puts "----------------------------"
+		end
 	end
 
 end #end class
@@ -97,9 +92,11 @@ loop do
 			task.save_task(params_task_create) #передаем этим параметры в метод для сохранения задач
 			puts
 		when "2"
-			task.view_task
-			puts "Enter - вернуться назад"
-			gets
+			message.view_all_tasks(task.parsed_data)
+			
+			puts "Ввод: "
+			input_task = gets.chomp
+
 		when ""
 			exit # выходим из программы если нажали Enter
 
