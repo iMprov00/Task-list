@@ -21,10 +21,10 @@ class TaskRepository # класс задач
 	  return if name_task.nil? || name_task.empty? # Проверяем, что название не пустое
 
 	  # Определяем путь к файлу
-	  file_path = File.join(__dir__, 'tasks.json')
+	  file_path = File.join(__dir__, 'tasks.json') #определяем относительный путь
 	  
 	  # Читаем текущие данные или создаем пустую структуру
-	  data = if File.exist?(file_path)
+	  data = if File.exist?(file_path) 
 	           json_data = File.read(file_path)
 	           JSON.parse(json_data, symbolize_names: true)
 	         else
@@ -35,7 +35,7 @@ class TaskRepository # класс задач
 	  new_task = {
 	    completed: false,
 	    name: name_task,
-	    date: DateTime.now.strftime('%Y-%m-%d %H:%M:%S')
+	    date: DateTime.now.strftime('%Y-%m-%d %H:%M:%S') #текущая дата и время
 	  }
 	  
 	  # Добавляем задачу в массив
@@ -50,10 +50,10 @@ class TaskRepository # класс задач
 	end #end def
 
 	def view_task
-		@parsed_data[:task].each do |arr|
-			puts "Задача: #{arr[:name]}"
-			puts "Выполнена: #{arr[:completed]? "X" : " "}"
-			puts "Дата создания: #{arr[:date]}"
+		@parsed_data[:task].each_with_index do |value, index|
+			puts "Задача: №#{(index + 1)}, #{value[:name]}"
+			puts "Выполнена: #{value[:completed]? "X" : " "}"
+			puts "Дата создания: #{value[:date]}"
 			puts "----------------------------"
 		end
 	end #end def
