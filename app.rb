@@ -2,18 +2,24 @@ require 'json'
 require 'date'
 
 class TaskRepository # класс задач
+	attr_reader :parsed_data #инициализиурем переменную хранящую в себе спарсенный файл
+
+	def initialize 
+		read_json
+	end
 
 	def read_json
 	  file_path = File.join(__dir__, 'tasks.json')
 	  return unless File.exist?(file_path)
 
-	  json_data = File.read(file_path)  # Используем file_path вместо 'tasks.json'
-	  parsed_data = JSON.parse(json_data, symbolize_names: true)
-	  end
+	  json_data = File.read(file_path)  
+	  @parsed_data = JSON.parse(json_data, symbolize_names: true)
+	  
 	end
 
 	def save_task(options={}) #метод сохраняющий новую задачу
 		name_task = options[:name] || 0 # проверка на случай если переданный параметр пустой
+
 
 	end #end def
 end #end class
