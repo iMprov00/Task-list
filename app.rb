@@ -9,11 +9,11 @@ class TaskRepository # класс задач
 	end
 
 	def read_json
-	  file_path = File.join(__dir__, 'tasks.json')
-	  return unless File.exist?(file_path)
+	  file_path = File.join(__dir__, 'tasks.json') #сохраняем в переменную путь к файлу
+	  return unless File.exist?(file_path) 
 
 	  json_data = File.read(file_path)  
-	  @parsed_data = JSON.parse(json_data, symbolize_names: true)
+	  @parsed_data = JSON.parse(json_data, symbolize_names: true) #парсим данные в переменную
 	end
 
 	def save_task(options={})
@@ -49,7 +49,7 @@ class TaskRepository # класс задач
 	  puts "Задача добавлена: #{name_task}"
 	end #end def
 
-	def view_task
+	def view_all_tasks  # метод для отображения всех задач
 		@parsed_data[:task].each_with_index do |value, index|
 			puts "Задача: №#{(index + 1)}, #{value[:name]}"
 			puts "Выполнена: #{value[:completed]? "X" : " "}"
