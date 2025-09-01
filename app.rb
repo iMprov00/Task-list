@@ -1,10 +1,11 @@
 require 'json'
 require 'date'
 
-class Task # класс задач
+class TaskRepository # класс задач
 
 	def save_task(options={}) #метод сохраняющий новую задачу
 		name_task = options[:name] || 0 # проверка на случай если переданный параметр пустой
+
 
 
 	end #end def
