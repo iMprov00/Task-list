@@ -69,6 +69,15 @@ class Message # класс для управления сообщениями
 		print "Ввод: "
 	end #end def
 
+	def editing_task_message
+		puts 
+		puts "Редактироване задачи"
+		puts "--------------"
+		puts "1 - название"
+		puts "2 - выполнение"
+		puts
+	end
+
 	def task_message
 		print "Введите название задачи: "
 	end
@@ -80,6 +89,18 @@ class Message # класс для управления сообщениями
 			puts "Дата создания: #{value[:date]}"
 			puts "----------------------------"
 		end
+	end #end def
+
+	def view_task(data)
+			puts
+			puts "Задача: #{data[:name]}"
+			puts "Выполнена: #{data[:completed]? "X" : " "}"
+			puts "Дата создания: #{data[:date]}"
+			puts 
+	end
+
+	def no_task
+		puts "Такой задачи нет в списке"
 	end #end def
 
 end #end class
@@ -101,6 +122,7 @@ loop do
 			params_task_create = {name: input_task_create} # сохраняем ввод пользователя в переменную параметров		
 			task.save_task(params_task_create) #передаем этим параметры в метод для сохранения задач
 			puts
+
 		when "2"
 			message.view_all_tasks(task.parsed_data)
 			
@@ -110,7 +132,15 @@ loop do
 			if input_task.empty? 
 
 			else
-				task.is_available?(input_task)
+				if task.is_available?(input_task)
+					loop do	
+						data = task.parsed_data
+						message.view_task(data[:task][input_task.to_i])
+						print ""
+					end
+				else
+					message.no_task
+				end
 			end
 
 		when ""
